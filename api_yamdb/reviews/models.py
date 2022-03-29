@@ -7,7 +7,25 @@ class User(AbstractBaseUser):
     pass
 
 
+class Category(models.Model):
+    pass
+
+
+class Genre(models.Model):
+    pass
+
+
+class Title(models.Model):
+    pass
+
+
 class Review(models.Model):
+    title_id = models.ForeignKey(
+        'ID произведения',
+        Title,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+    )
     text = models.TextField(
         'Текст отзыва',
         blank=False
@@ -45,6 +63,12 @@ class Review(models.Model):
 
 
 class Comment(models.Model):
+    review_id = models.ForeignKey(
+        'ID отзыва',
+        Review,
+        on_delete=models.CASCADE,
+        related_name='comments',
+    )
     text = models.TextField(
         'Текст комментария',
         blank=False,
