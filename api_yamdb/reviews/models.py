@@ -30,10 +30,10 @@ class Title(models.Model):
     description = models.CharField(max_length=256, blank=True)
     genre = models.ManyToManyField(Genre,
                                    related_name='titles',
-                                   on_delete=models.CASCADE)
+                                   on_delete=models.SET_NULL)
     category = models.ForeignKey(Category,
                                  related_name='titles',
-                                 on_delete=models.CASCADE)
+                                 on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.name
