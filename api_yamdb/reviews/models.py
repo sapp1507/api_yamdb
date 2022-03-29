@@ -21,7 +21,6 @@ class Title(models.Model):
 
 class Review(models.Model):
     title_id = models.ForeignKey(
-        'ID произведения',
         Title,
         on_delete=models.CASCADE,
         related_name='reviews',
@@ -64,7 +63,6 @@ class Review(models.Model):
 
 class Comment(models.Model):
     review_id = models.ForeignKey(
-        'ID отзыва',
         Review,
         on_delete=models.CASCADE,
         related_name='comments',
@@ -74,7 +72,6 @@ class Comment(models.Model):
         blank=False,
     )
     author = models.ForeignKey(
-        'Автор',
         User,
         on_delete=models.CASCADE,
         related_name='comments',
