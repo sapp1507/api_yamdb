@@ -8,7 +8,10 @@ class User(AbstractBaseUser):
 
 
 class Review(models.Model):
-    text = models.TextField()
+    text = models.TextField(
+        'Текст отзыва',
+        blank=False
+    )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -16,12 +19,11 @@ class Review(models.Model):
     )
     score = models.IntegerField(
         'Оценка произведения',
-        default=0,
-        blank=True,
+        blank=False,
         validators=[
             MinValueValidator(
-                0,
-                message='Оценка не может быть отрицательной',
+                1,
+                message='Оценка должна быть от 1 до 10',
             ),
             MaxValueValidator(
                 10,
@@ -37,6 +39,30 @@ class Review(models.Model):
     class Meta:
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
+
+    def __str__(self):
+        return self.text
+
+
+class Comment(models.Model):
+    text = models.TextField(
+        'Текст комментария',
+        blank=False,
+    )
+    author = models.ForeignKey(
+        'Автор',
+        User,
+        on_delete=models.CASCADE,
+        related_name='comments',
+    )
+    pub_date = models.DateTimeField(
+        'Дата добавления',
+        auto_now_add=True,
+    )
+
+    class Meta:
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
 
     def __str__(self):
         return self.text
