@@ -1,12 +1,13 @@
-from rest_framework import serializers
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
+from rest_framework import serializers
+
 from reviews.models import Comment, Review, Genre, Category, Title
 
-
 User = get_user_model()
+
 
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
@@ -40,6 +41,18 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         fields = ['name', 'slug']
         model = Category
+        lookup_field = 'slug'
+        extra_kwargs = {
+            'url': {'lookup_field': 'slug'}
+        }
+
+    def validate(self, attrs):
+        slug = attrs['slug']
+        if Category.objects.filter(slug=slug).exists():
+            raise serializers.ValidationError(
+                f'slug: {slug} уже существует'
+            )
+        return attrs
 
 
 class TitleSerializer(serializers.ModelSerializer):
