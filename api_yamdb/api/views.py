@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions, viewsets
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import RegisterSerializer, TokenSerializer, UserSerializer
+from .serializers import RegisterSerializer, TokenSerializer, UserMeSerializer, UserSerializer
 from .permissions import AdminPermission
 from django.contrib.auth import get_user_model
 
@@ -46,5 +46,24 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (AdminPermission,)
     lookup_field = 'username'
 
-    def perform_destroy(self, instance):
-        return super().perform_destroy(instance)
+
+class UserMeAPIView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = UserMeSerializer
+
+    def get(self, request):
+        serializer = self.serializer_class(request.user)
+        data = serializer.data
+        return Response(data, status=status.HTTP_200_OK)
+
+    def patch(self, request):
+        user = request.user
+        serializer = self.serializer_class(
+            user,
+            data=request.data,
+            partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        data = serializer.data
+        return Response(data, status=status.HTTP_200_OK)

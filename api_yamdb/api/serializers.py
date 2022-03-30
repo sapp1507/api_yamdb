@@ -5,6 +5,11 @@ from django.shortcuts import get_object_or_404
 
 User = get_user_model()
 
+CHOICES = (
+    ('user', 'user'),
+    ('admin', 'admin'),
+    ('moderator', 'moderator'),
+)
 
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -51,3 +56,7 @@ class UserSerializer(serializers.ModelSerializer):
             'last_name'
         )
         model = User
+
+
+class UserMeSerializer(UserSerializer):
+    role = serializers.ChoiceField(choices=CHOICES, read_only=True)
