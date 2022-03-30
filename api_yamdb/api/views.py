@@ -1,11 +1,13 @@
+from django.db import models
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.pagination import LimitOffsetPagination
 
-from reviews.models import Comment, Review
+from reviews.models import Comment, Review, Title, Genre, Category
 
 from .permissions import IsAuthorOrReadOnly
-from .serializers import CommentSerializer, ReviewSerializer
+from .serializers import (CommentSerializer, ReviewSerializer,
+                          TitleSerializer, GenreSerializer, CategorySerializer)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
@@ -36,3 +38,25 @@ class CommentViewSet(viewsets.ModelViewSet):
             pk=self.kwargs.get('review_id')
         )
         serializer.save(author=self.request.user, review=review)
+
+
+class GenreViewSet(viewsets.ModelViewSet):
+    serializer_class = GenreSerializer
+    queryset = Genre.objects.all()
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()
+
+
+class TitleViewsSet(viewsets.ModelViewSet):
+    """Вывод списка произведений с рейтингом."""
+    serializer_class = TitleSerializer
+
+    def get_queryset(self):
+        titles = Title.objects.all().annotate(
+            rating=models.Sum(models.F('reviews__score')) / models.Count(
+                models.F('reviews'))
+        )
+        return titles
