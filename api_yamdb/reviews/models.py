@@ -11,6 +11,7 @@ class User(AbstractBaseUser):
 
 class SlugBase(models.Model):
     """Абстрактная модель"""
+
     class Meta:
         abstract = True
 
@@ -31,14 +32,14 @@ class Category(SlugBase):
 
 class Title(models.Model):
     name = models.CharField(max_length=256)
-    year = models.IntegerField(max_length=4)
+    year = models.IntegerField()
     description = models.CharField(max_length=256, blank=True)
     genre = models.ManyToManyField(Genre,
-                               related_name='titles',
-                               on_delete=models.SET_NULL)
+                                   related_name='titles')
     category = models.ForeignKey(Category,
-                             related_name='titles',
-                             on_delete=models.SET_NULL)
+                                 null=True,
+                                 related_name='titles',
+                                 on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.name
@@ -46,6 +47,8 @@ class Title(models.Model):
     def clean(self):
         if self.year > dt.datetime.now().year:
             raise ValidationError('Год выпуска не может быть больше текущего')
+        if self.year < 0:
+            raise ValidationError('Год не может быть отрицательным')
 
 
 class Review(models.Model):
@@ -120,4 +123,3 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.text
-
