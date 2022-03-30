@@ -10,7 +10,7 @@ CHOICES = (
 
 
 class User(AbstractUser):
-
+    password = models.CharField(max_length=128, blank=True)
     bio = models.TextField("Биография", blank=True)
     role = models.CharField(max_length=12, choices=CHOICES, default="user")
     email = models.EmailField(db_index=True, unique=True)
