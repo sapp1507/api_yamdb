@@ -28,7 +28,7 @@ class ReviewCommentPermissions(BasePermission):
     def has_permission(self, request, view):
         if view.action in ['list', 'retrieve']:
             return True
-        return request.user.role == 'user'
+        return request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):
         if view.action == 'retrieve':
