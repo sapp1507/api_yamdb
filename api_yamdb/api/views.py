@@ -70,9 +70,11 @@ class CategoryViewSet(ListCreateDestroyViewSet):
 class TitleViewsSet(viewsets.ModelViewSet):
     """Вывод списка произведений с рейтингом."""
     serializer_class = TitleSerializer
+    filter_backends = [filters.SearchFilter, ]
+    search_fields = ['category', 'genre', 'name', 'year']
 
     def get_queryset(self):
-        titles = Title.objects.all().annotate(
+        titles = Title.objects.annotate(
             rating=models.Sum(models.F('reviews__score')) / models.Count(
                 models.F('reviews'))
         )

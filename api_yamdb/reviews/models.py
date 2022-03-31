@@ -20,7 +20,7 @@ class SlugBase(models.Model):
         return self.name
 
 
-class Genre(models.Model):
+class Genre(SlugBase):
     pass
 
 
@@ -30,7 +30,18 @@ class Category(SlugBase):
 
 class Title(models.Model):
     name = models.CharField(max_length=256)
-    year = models.IntegerField()
+    year = models.IntegerField(
+        validators=[
+            MinValueValidator(
+                0,
+                message='Год не может быть отрицательным',
+            ),
+            MaxValueValidator(
+                dt.datetime.now().year,
+                message='Год не может быть больше текущего',
+            )
+        ]
+    )
     description = models.CharField(max_length=256, blank=True)
     genre = models.ManyToManyField(
         Genre,
