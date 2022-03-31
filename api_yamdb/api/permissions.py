@@ -28,14 +28,14 @@ class ReviewCommentPermissions(BasePermission):
     def has_permission(self, request, view):
         if view.action in ['list', 'retrieve']:
             return True
-        return request.user.is_authenticated
+        return request.user.role == 'user'
 
     def has_object_permission(self, request, view, obj):
         if view.action == 'retrieve':
             return True
         if view.action in ['partial_update', 'destroy']:
             if (request.user == obj.author
-                    or request.user.is_admin
-                    or request.user.is_moderator):
+                    or request.user.role == 'admin'
+                    or request.user.role == 'moderator'):
                 return True
             return False
