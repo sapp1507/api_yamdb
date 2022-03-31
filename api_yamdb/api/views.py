@@ -50,9 +50,13 @@ class CommentViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user, review=review)
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class GenreViewSet(ListCreateDestroyViewSet):
+    permission_classes = [AdminOrReadOnly, ]
     serializer_class = GenreSerializer
     queryset = Genre.objects.all()
+    filter_backends = [filters.SearchFilter, ]
+    search_fields = ['name']
+    lookup_field = 'slug'
 
 
 class CategoryViewSet(ListCreateDestroyViewSet):
@@ -66,6 +70,7 @@ class CategoryViewSet(ListCreateDestroyViewSet):
 
 class TitleViewsSet(viewsets.ModelViewSet):
     """Вывод списка произведений с рейтингом."""
+    permission_classes = [AdminOrReadOnly, ]
     serializer_class = TitleSerializer
 
     def get_queryset(self):
@@ -74,6 +79,7 @@ class TitleViewsSet(viewsets.ModelViewSet):
                 models.F('reviews'))
         )
         return titles
+
 
 
 class RegistrationAPIView(APIView):

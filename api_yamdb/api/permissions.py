@@ -19,4 +19,3 @@ class AdminOrReadOnly(BasePermission):
         return (request.user.is_authenticated
                 and (request.user.role == 'admin' or request.user.is_staff)
                 or request.method in SAFE_METHODS)
-
