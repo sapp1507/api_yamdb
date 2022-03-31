@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.validators import ValidationError
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
@@ -25,6 +26,20 @@ class ReviewSerializer(serializers.ModelSerializer):
         slug_field='username',
         read_only=True,
     )
+
+    def check_one_review(self, data):
+        request = self.context['request']
+        title = self.context['title']
+        if (
+            request.method == 'POST'
+            and Review.objects.filter(
+                title=title, author=request.user
+            ).exists()
+        ):
+            raise ValidationError(
+                'Вы можете только изменить существующий отзыв'
+            )
+        return data
 
     class Meta:
         fields = '__all__'
