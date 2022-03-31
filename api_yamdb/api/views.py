@@ -89,7 +89,7 @@ class TitleViewsSet(viewsets.ModelViewSet):
     """Вывод списка произведений с рейтингом."""
     permission_classes = [AdminOrReadOnly, ]
     filter_backends = [DjangoFilterBackend, ]
-    filter_class = TitleFilterSet
+    filterset_class = TitleFilterSet
     pagination_class = LimitOffsetPagination
 
     def get_serializer_class(self):
