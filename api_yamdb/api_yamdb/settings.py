@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     'api',
     'reviews',
     'rest_framework',
+    'django_filters',
     'users',
 ]
 
@@ -75,7 +76,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'UTC'
 

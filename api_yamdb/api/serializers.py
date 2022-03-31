@@ -86,10 +86,8 @@ class CategorySerializer(serializers.ModelSerializer):
 class TitleSerializer(serializers.ModelSerializer):
     rating = serializers.IntegerField(read_only=True)
     description = serializers.CharField(required=False)
-    genre = serializers.SlugRelatedField(slug_field='slug', many=True,
-                                         queryset=Genre.objects.all())
-    category = serializers.SlugRelatedField(slug_field='slug',
-                                            queryset=Category.objects.all())
+    genre = GenreSerializer(many=True)
+    category = CategorySerializer()
 
     def get_rating(self, obj):
         rating = Review.objects.filter(title=obj.id).aggregate(Avg('score'))
@@ -101,6 +99,13 @@ class TitleSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'year', 'rating', 'description', 'genre',
                   'category']
         model = Title
+
+
+class TitleSaveSerializer(TitleSerializer):
+    genre = serializers.SlugRelatedField(slug_field='slug', many=True,
+                                         queryset=Genre.objects)
+    category = serializers.SlugRelatedField(slug_field='slug',
+                                            queryset=Category.objects)
 
     def create(self, validated_data):
         genres = validated_data.pop('genre')
