@@ -17,5 +17,5 @@ class AdminPermission(BasePermission):
 class AdminOrReadOnly(BasePermission):
     def has_permission(self, request, view):
         return (request.user.is_authenticated
-                and (request.user.role == 'admin' or request.user.is_staff)
+                and (request.user.role == 'admin' or request.user.is_superuser)
                 or request.method in SAFE_METHODS)
