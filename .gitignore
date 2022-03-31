@@ -149,3 +149,6 @@ dmypy.json
 media/
 
 /api_yamdb/api_yamdb/db.py
+/api_yamdb/reviews/migrations/
+/api_yamdb/users/migrations/
+/api_yamdb/api/migrations/
