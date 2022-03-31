@@ -28,20 +28,6 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only=True,
     )
 
-    def check_one_review(self, data):
-        request = self.context['request']
-        title = self.context['title']
-        if (
-            request.method == 'POST'
-            and Review.objects.filter(
-                title=title, author=request.user
-            ).exists()
-        ):
-            raise ValidationError(
-                'Вы можете только изменить существующий отзыв'
-            )
-        return data
-
     def validate(self, data):
         if self.context['request'].method != 'POST':
             return data
@@ -49,7 +35,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         title = self.context['view'].kwargs.get('title_id')
         if Review.objects.filter(title=title, author=user).exists():
             raise serializers.ValidationError(
-                "Нельзя оставлять более одного отзыва на произведение"
+                'Нельзя написать более одного отзыва на произведение'
             )
         return data
 

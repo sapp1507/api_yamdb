@@ -22,9 +22,6 @@ class AdminOrReadOnly(BasePermission):
 
 
 class ReviewCommentPermissions(BasePermission):
-    """
-    Права доступа: Автор отзыва, модератор или администратор.
-    """
     def has_permission(self, request, view):
         if view.action in ['list', 'retrieve']:
             return True
