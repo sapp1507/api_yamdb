@@ -89,6 +89,8 @@ class TitleSerializer(serializers.ModelSerializer):
     genre = GenreSerializer(many=True)
     category = CategorySerializer()
 
+    # Не работает. на данный момент подсчет рейтинга идет через get_queryset в
+    # view
     def get_rating(self, obj):
         rating = Review.objects.filter(title=obj.id).aggregate(Avg('score'))
         if rating['score__avg'] is None:

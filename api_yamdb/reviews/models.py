@@ -39,7 +39,7 @@ class Title(models.Model):
             )
         ]
     )
-    description = models.CharField(max_length=256, blank=True)
+    description = models.CharField(max_length=256, blank=True, null=True)
     genre = models.ManyToManyField(
         Genre,
         related_name='titles',
