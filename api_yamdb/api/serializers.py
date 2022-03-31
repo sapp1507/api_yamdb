@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
+from django.db.models.aggregates import Avg
 
 from reviews.models import Comment, Review, Genre, Category, Title
 
@@ -89,6 +90,12 @@ class TitleSerializer(serializers.ModelSerializer):
                                          queryset=Genre.objects.all())
     category = serializers.SlugRelatedField(slug_field='slug',
                                             queryset=Category.objects.all())
+
+    def get_rating(self, obj):
+        rating = Review.objects.filter(title=obj.id).aggregate(Avg('score'))
+        if rating['score__avg'] is None:
+            return None
+        return rating['score__avg']
 
     class Meta:
         fields = ['id', 'name', 'year', 'rating', 'description', 'genre',
