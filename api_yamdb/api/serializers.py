@@ -1,8 +1,8 @@
-from rest_framework import serializers
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
+from rest_framework import serializers
 
 from reviews.models import Comment, Review, Genre, Category, Title
 
@@ -70,13 +70,20 @@ class CategorySerializer(serializers.ModelSerializer):
 class TitleSerializer(serializers.ModelSerializer):
     rating = serializers.IntegerField(read_only=True)
     description = serializers.CharField(required=False)
-    genre = GenreSerializer(many=True, read_only=True)
-    category = CategorySerializer(required=True, read_only=True)
+    genre = GenreSerializer(many=True)
+    category = CategorySerializer()
 
     class Meta:
         fields = ['id', 'name', 'year', 'rating', 'description', 'genre',
                   'category']
         model = Title
+
+
+class TitleSaveSerializer(TitleSerializer):
+    genre = serializers.SlugRelatedField(slug_field='slug', many=True,
+                                         queryset=Genre.objects)
+    category = serializers.SlugRelatedField(slug_field='slug',
+                                            queryset=Category.objects)
 
     def create(self, validated_data):
         genres = validated_data.pop('genre')

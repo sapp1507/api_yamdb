@@ -8,8 +8,8 @@ from .views import (RegistrationAPIView, TokenAPIView, UserMeAPIView,
 router = DefaultRouter()
 router.register('users', UserViewSet)
 router.register(r'categories', CategoryViewSet)
-router.register(r'genres', GenreViewSet, basename='Genre')
-router.register(r'titles', TitleViewsSet, basename='Title')
+router.register(r'genres', GenreViewSet, basename='genre')
+router.register(r'titles', TitleViewsSet, basename='title')
 router.register(
     r'titles/(?P<title_id>\d+)/reviews',
     ReviewViewSet,

@@ -1,6 +1,7 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.shortcuts import get_object_or_404
-from django.contrib.auth import get_user_model
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, status, viewsets, filters
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
@@ -8,13 +9,15 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from reviews.models import Comment, Review, Title, Genre, Category
+from .filters import TitleFilterSet
+from .mixins import ListCreateDestroyViewSet
 from .permissions import IsAuthorOrReadOnly, AdminPermission, AdminOrReadOnly
 from .serializers import (CommentSerializer, ReviewSerializer,
                           TitleSerializer, GenreSerializer, CategorySerializer,
                           RegisterSerializer, TokenSerializer,
-                          UserMeSerializer, UserSerializer)
+                          UserMeSerializer, UserSerializer,
+                          TitleSaveSerializer)
 from .utils import send_confirmation_code
-from .mixins import ListCreateDestroyViewSet
 
 User = get_user_model()
 
@@ -69,9 +72,14 @@ class CategoryViewSet(ListCreateDestroyViewSet):
 
 class TitleViewsSet(viewsets.ModelViewSet):
     """Вывод списка произведений с рейтингом."""
-    serializer_class = TitleSerializer
-    filter_backends = [filters.SearchFilter, ]
-    search_fields = ['category', 'genre', 'name', 'year']
+    permission_classes = [AdminOrReadOnly, ]
+    filter_backends = [DjangoFilterBackend, ]
+    filter_class = TitleFilterSet
+
+    def get_serializer_class(self):
+        if self.action in ('list', 'retrieve'):
+            return TitleSerializer
+        return TitleSaveSerializer
 
     def get_queryset(self):
         titles = Title.objects.annotate(
