@@ -12,3 +12,10 @@ class AdminPermission(BasePermission):
         return user.is_authenticated and (
             user.role == 'admin' or user.is_superuser
         )
+
+
+class AdminOrReadOnly(BasePermission):
+    def has_permission(self, request, view):
+        return (request.user.is_authenticated
+                and (request.user.role == 'admin' or request.user.is_staff)
+                or request.method in SAFE_METHODS)

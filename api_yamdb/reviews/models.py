@@ -20,8 +20,8 @@ class SlugBase(models.Model):
         return self.name
 
 
-class Genre(models.Model):  # изменил класс наследования,в родительском классе
-    pass  # есть поля и он требовал их. Будешь дописывать - вернешь обратно
+class Genre(models.Model):
+    pass
 
 
 class Category(SlugBase):
@@ -35,13 +35,13 @@ class Title(models.Model):
     genre = models.ManyToManyField(
         Genre,
         related_name='titles',
-    )  # Удалил on_delete=models.SET_NULL он не подходит для ManyToMany
+    )
     category = models.ForeignKey(
         Category,
         related_name='titles',
         on_delete=models.SET_NULL,
         null=True,
-        blank=True  # Добавил null и blank
+        blank=True
     )
 
     def __str__(self):
@@ -50,6 +50,8 @@ class Title(models.Model):
     def clean(self):
         if self.year > dt.datetime.now().year:
             raise ValidationError('Год выпуска не может быть больше текущего')
+        if self.year < 0:
+            raise ValidationError('Год не может быть отрицательным')
 
 
 class Review(models.Model):
@@ -124,4 +126,3 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.text
-

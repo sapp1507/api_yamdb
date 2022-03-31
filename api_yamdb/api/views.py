@@ -1,19 +1,20 @@
 from django.db import models
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
-from rest_framework import permissions, status, viewsets
+from rest_framework import permissions, status, viewsets, filters
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from reviews.models import Comment, Review, Title, Genre, Category
-from .permissions import IsAuthorOrReadOnly, AdminPermission
+from .permissions import IsAuthorOrReadOnly, AdminPermission, AdminOrReadOnly
 from .serializers import (CommentSerializer, ReviewSerializer,
                           TitleSerializer, GenreSerializer, CategorySerializer,
                           RegisterSerializer, TokenSerializer,
                           UserMeSerializer, UserSerializer)
 from .utils import send_confirmation_code
+from .mixins import ListCreateDestroyViewSet
 
 User = get_user_model()
 
@@ -48,14 +49,22 @@ class CommentViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user, review=review)
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class GenreViewSet(ListCreateDestroyViewSet):
+    permission_classes = [AdminOrReadOnly, ]
     serializer_class = GenreSerializer
     queryset = Genre.objects.all()
+    filter_backends = [filters.SearchFilter, ]
+    search_fields = ['name']
+    lookup_field = 'slug'
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(ListCreateDestroyViewSet):
+    permission_classes = [AdminOrReadOnly, ]
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
+    filter_backends = [filters.SearchFilter, ]
+    search_fields = ['name']
+    lookup_field = 'slug'
 
 
 class TitleViewsSet(viewsets.ModelViewSet):

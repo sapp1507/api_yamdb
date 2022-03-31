@@ -35,24 +35,58 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ['name', 'slug']
         model = Genre
+        lookup_field = 'slug'
+        extra_kwargs = {
+            'url': {'lookup_field': 'slug'}
+        }
+
+    def validate(self, attrs):
+        slug = attrs['slug']
+        if Genre.objects.filter(slug=slug).exists():
+            raise serializers.ValidationError(
+                f'slug: {slug} уже существует'
+            )
+        return attrs
 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         fields = ['name', 'slug']
         model = Category
+        lookup_field = 'slug'
+        extra_kwargs = {
+            'url': {'lookup_field': 'slug'}
+        }
+
+    def validate(self, attrs):
+        slug = attrs['slug']
+        if Category.objects.filter(slug=slug).exists():
+            raise serializers.ValidationError(
+                f'slug: {slug} уже существует'
+            )
+        return attrs
 
 
 class TitleSerializer(serializers.ModelSerializer):
     rating = serializers.IntegerField(read_only=True)
     description = serializers.CharField(required=False)
-    #  genre = GenreSerializer(many=True)
-    #  category = CategorySerializer()
+    genre = serializers.SlugRelatedField(slug_field='slug', many=True,
+                                         queryset=Genre.objects.all())
+    category = serializers.SlugRelatedField(slug_field='slug',
+                                            queryset=Category.objects.all())
 
     class Meta:
         fields = ['id', 'name', 'year', 'rating', 'description', 'genre',
                   'category']
         model = Title
+
+    def create(self, validated_data):
+        genres = validated_data.pop('genre')
+        title = Title.objects.create(**validated_data)
+        for genre in genres:
+            genre.titles.add(title)
+
+        return title
 
 
 class RegisterSerializer(serializers.ModelSerializer):
