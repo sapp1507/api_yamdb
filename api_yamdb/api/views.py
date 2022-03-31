@@ -7,11 +7,13 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.db.models import Avg
 
-from reviews.models import Comment, Review, Title, Genre, Category
+
+from reviews.models import Review, Title, Genre, Category
 from .filters import TitleFilterSet
 from .mixins import ListCreateDestroyViewSet
-from .permissions import (IsAuthorOrReadOnly, AdminPermission,
+from .permissions import (AdminPermission,
                           AdminOrReadOnly, ReviewCommentPermissions,)
 from .serializers import (CommentSerializer, ReviewSerializer,
                           TitleSerializer, GenreSerializer, CategorySerializer,
@@ -84,8 +86,7 @@ class TitleViewsSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         titles = Title.objects.annotate(
-            rating=models.Sum(models.F('reviews__score')) / models.Count(
-                models.F('reviews'))
+            rating=Avg('reviews__score')
         )
         return titles
 
