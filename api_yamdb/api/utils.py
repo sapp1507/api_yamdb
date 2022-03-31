@@ -6,9 +6,9 @@ def send_confirmation_code(user):
     email = user.email
     confirmation_code = default_token_generator.make_token(user)
     send_mail(
-        "Код подтверждения",
-        f"Ваш код подтверждения {confirmation_code}",
-        "admin@yandb.com",
-        [f"{email}"],
+        'Код подтверждения',
+        f'Ваш код подтверждения {confirmation_code}',
+        'admin@yamdb.com',
+        [f'{email}'],
         fail_silently=False,
     )

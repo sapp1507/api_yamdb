@@ -46,8 +46,8 @@ class CategorySerializer(serializers.ModelSerializer):
 class TitleSerializer(serializers.ModelSerializer):
     rating = serializers.IntegerField(read_only=True)
     description = serializers.CharField(required=False)
-    #genre = GenreSerializer(many=True)
-    #category = CategorySerializer()
+    #  genre = GenreSerializer(many=True)
+    #  category = CategorySerializer()
 
     class Meta:
         fields = ['id', 'name', 'year', 'rating', 'description', 'genre',
@@ -57,14 +57,14 @@ class TitleSerializer(serializers.ModelSerializer):
 
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ("username", "email")
+        fields = ('username', 'email')
         model = User
 
     def validate(self, data):
-        username = data["username"]
-        if username == "me":
+        username = data['username']
+        if username == 'me':
             raise serializers.ValidationError(
-                "Имя пользователя me - недоступно"
+                'Имя пользователя me - недоступно'
             )
         return super().validate(data)
 
@@ -74,16 +74,16 @@ class TokenSerializer(serializers.ModelSerializer):
     confirmation_code = serializers.CharField(max_length=512)
 
     class Meta:
-        fields = ("username", "confirmation_code")
+        fields = ('username', 'confirmation_code')
         model = User
 
     def validate(self, data):
-        if not data["username"]:
+        if not data['username']:
             raise serializers.ValidationError(
-                "Имя пользователя me - недоступно"
+                'Имя пользователя me - недоступно'
             )
-        user = get_object_or_404(User, username=data["username"])
-        confirmation_code = data["confirmation_code"]
+        user = get_object_or_404(User, username=data['username'])
+        confirmation_code = data['confirmation_code']
         if not default_token_generator.check_token(user, confirmation_code):
             raise serializers.ValidationError()
         return super().validate(data)
@@ -92,12 +92,12 @@ class TokenSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         fields = (
-            "username",
-            "email",
-            "role",
-            "bio",
-            "first_name",
-            "last_name",
+            'username',
+            'email',
+            'role',
+            'bio',
+            'first_name',
+            'last_name',
         )
         model = User
 

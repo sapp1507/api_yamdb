@@ -1,12 +1,11 @@
 import datetime as dt
-from django.contrib.auth.models import AbstractBaseUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from rest_framework.exceptions import ValidationError
+from django.contrib.auth import get_user_model
 
 
-class User(AbstractBaseUser):
-    pass
+User = get_user_model()
 
 
 class SlugBase(models.Model):
@@ -21,8 +20,8 @@ class SlugBase(models.Model):
         return self.name
 
 
-class Genre(SlugBase):
-    pass
+class Genre(models.Model):  # изменил класс наследования,в родительском классе
+    pass  # есть поля и он требовал их. Будешь дописывать - вернешь обратно
 
 
 class Category(SlugBase):
@@ -31,14 +30,19 @@ class Category(SlugBase):
 
 class Title(models.Model):
     name = models.CharField(max_length=256)
-    year = models.IntegerField(max_length=4)
+    year = models.IntegerField()
     description = models.CharField(max_length=256, blank=True)
-    genre = models.ManyToManyField(Genre,
-                               related_name='titles',
-                               on_delete=models.SET_NULL)
-    category = models.ForeignKey(Category,
-                             related_name='titles',
-                             on_delete=models.SET_NULL)
+    genre = models.ManyToManyField(
+        Genre,
+        related_name='titles',
+    )  # Удалил on_delete=models.SET_NULL он не подходит для ManyToMany
+    category = models.ForeignKey(
+        Category,
+        related_name='titles',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True  # Добавил null и blank
+    )
 
     def __str__(self):
         return self.name
