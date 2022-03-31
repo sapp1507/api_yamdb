@@ -1,25 +1,24 @@
 from django.contrib.auth import get_user_model
-from django.db import models
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import permissions, status, viewsets, filters
+from rest_framework import filters, permissions, status, viewsets
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.db.models import Avg
 
+from reviews.models import Category, Genre, Review, Title
 
-from reviews.models import Review, Title, Genre, Category
 from .filters import TitleFilterSet
 from .mixins import ListCreateDestroyViewSet
-from .permissions import (AdminPermission,
-                          AdminOrReadOnly, ReviewCommentPermissions,)
-from .serializers import (CommentSerializer, ReviewSerializer,
-                          TitleSerializer, GenreSerializer, CategorySerializer,
-                          RegisterSerializer, TokenSerializer,
-                          UserMeSerializer, UserSerializer,
-                          TitleSaveSerializer)
+from .permissions import (AdminOrReadOnly, AdminPermission,
+                          ReviewCommentPermissions)
+from .serializers import (CategorySerializer, CommentSerializer,
+                          GenreSerializer, RegisterSerializer,
+                          ReviewSerializer, TitleSaveSerializer,
+                          TitleSerializer, TokenSerializer, UserMeSerializer,
+                          UserSerializer)
 from .utils import send_confirmation_code
 
 User = get_user_model()
