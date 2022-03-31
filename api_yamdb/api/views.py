@@ -1,20 +1,21 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.shortcuts import get_object_or_404
-from django.contrib.auth import get_user_model
-from rest_framework import permissions, status, viewsets, filters
+from rest_framework import filters, permissions, status, viewsets
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from reviews.models import Comment, Review, Title, Genre, Category
-from .permissions import IsAuthorOrReadOnly, AdminPermission, AdminOrReadOnly
-from .serializers import (CommentSerializer, ReviewSerializer,
-                          TitleSerializer, GenreSerializer, CategorySerializer,
-                          RegisterSerializer, TokenSerializer,
+from reviews.models import Category, Comment, Genre, Review, Title
+
+from .mixins import ListCreateDestroyViewSet
+from .permissions import AdminOrReadOnly, AdminPermission, IsAuthorOrReadOnly
+from .serializers import (CategorySerializer, CommentSerializer,
+                          GenreSerializer, RegisterSerializer,
+                          ReviewSerializer, TitleSerializer, TokenSerializer,
                           UserMeSerializer, UserSerializer)
 from .utils import send_confirmation_code
-from .mixins import ListCreateDestroyViewSet
 
 User = get_user_model()
 
