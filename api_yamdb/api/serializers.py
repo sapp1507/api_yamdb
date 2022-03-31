@@ -1,10 +1,10 @@
-from rest_framework import serializers
-from rest_framework.validators import ValidationError
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
-from django.shortcuts import get_object_or_404
 from django.db.models.aggregates import Avg
+from django.shortcuts import get_object_or_404
+from rest_framework import serializers
+from rest_framework.validators import ValidationError
 
 from reviews.models import Comment, Review, Genre, Category, Title
 
