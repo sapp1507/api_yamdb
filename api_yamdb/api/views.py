@@ -11,7 +11,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from reviews.models import Comment, Review, Title, Genre, Category
 from .filters import TitleFilterSet
 from .mixins import ListCreateDestroyViewSet
-from .permissions import IsAuthorOrReadOnly, AdminPermission, AdminOrReadOnly
+from .permissions import (IsAuthorOrReadOnly, AdminPermission,
+                          AdminOrReadOnly, ReviewCommentPermissions,)
 from .serializers import (CommentSerializer, ReviewSerializer,
                           TitleSerializer, GenreSerializer, CategorySerializer,
                           RegisterSerializer, TokenSerializer,
@@ -23,13 +24,17 @@ User = get_user_model()
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
-    queryset = Review.objects.all()
     serializer_class = ReviewSerializer
-    permission_classes = [IsAuthorOrReadOnly]
+    permission_classes = [ReviewCommentPermissions]
     pagination_class = LimitOffsetPagination
 
+    def get_queryset(self):
+        title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
+        return title.reviews.all()
+
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
+        serializer.save(author=self.request.user, title=title)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
