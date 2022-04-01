@@ -114,7 +114,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         username = data['username']
         if username == 'me':
             raise serializers.ValidationError(
-                'Имя пользователя me - недоступно'
+                'Имя пользователя me недопустимо'
             )
         return super().validate(data)
 
@@ -130,12 +130,14 @@ class TokenSerializer(serializers.ModelSerializer):
     def validate(self, data):
         if not data['username']:
             raise serializers.ValidationError(
-                'Имя пользователя me - недоступно'
+                'Передайте имя пользователя'
             )
         user = get_object_or_404(User, username=data['username'])
         confirmation_code = data['confirmation_code']
         if not default_token_generator.check_token(user, confirmation_code):
-            raise serializers.ValidationError()
+            raise serializers.ValidationError(
+                f'Код подверждения был выдан не {user}'
+            )
         return super().validate(data)
 
 
