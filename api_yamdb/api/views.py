@@ -127,6 +127,7 @@ class TokenAPIView(APIView):
             User,
             username=serializer.validated_data['username']
         )
+        # Нет проверки кода подтверждения
         token = str(RefreshToken.for_user(user).access_token)
         data = {'acces': token}
         return Response(data, status=status.HTTP_200_OK)
@@ -139,6 +140,8 @@ class UserViewSet(viewsets.ModelViewSet):
     lookup_field = 'username'
 
 
+# Получение профиля должно быть в UserViewSet отдельным экшеном
+# https://www.django-rest-framework.org/api-guide/viewsets/#marking-extra-actions-for-routing
 class UserMeAPIView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = UserMeSerializer

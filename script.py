@@ -3,6 +3,12 @@ import sqlite3
 from datetime import date
 from pathlib import Path
 
+"""Для импорта данных используются след. механизмы: 
+1) Дата миграции https://docs.djangoproject.com/en/3.1/topics/migrations/#data-migrations 
+2) Кастомная команда https://docs.djangoproject.com/en/3.1/howto/custom-management-commands/ 
+3) Загрузка фикстур https://docs.djangoproject.com/en/3.1/howto/initial-data/#:~:text=You'll%20store%20this%20data,re%2Dloaded%20into%20the%20database.
+Не стоит привязываться к конкретной БД - используйте ORM. Это универсальный механизм для работы с разными типами БД."""
+
 path_to_db = Path('api_yamdb', 'db.sqlite3')
 path_to_file = Path('api_yamdb', 'static', 'data', 'users.csv')
 today_date = str(date.today())
