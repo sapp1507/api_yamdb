@@ -1,3 +1,5 @@
+from django.conf import settings
+
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 
@@ -8,7 +10,7 @@ def send_confirmation_code(user):
     send_mail(
         'Код подтверждения',
         f'Ваш код подтверждения {confirmation_code}',
-        'admin@yamdb.com',
+        settings.ADMINS,
         [f'{email}'],
         fail_silently=False,
     )
