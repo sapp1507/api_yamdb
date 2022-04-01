@@ -3,7 +3,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from reviews.models import Category, Comment, Genre, Review, Title
+from reviews.models import Category, Comment, Genre, Review, Title, User
+from users import models
 
 User = get_user_model()
 
@@ -29,8 +30,8 @@ class ReviewSerializer(serializers.ModelSerializer):
         if self.context['request'].method != 'POST':
             return data
         user = self.context['request'].user
-        title = self.context['view'].kwargs.get('title_id')
-        if Review.objects.filter(title=title, author=user).exists():
+        title_id = self.context['view'].kwargs.get('title_id')
+        if Review.objects.filter(title=title_id, author=user).exists():
             raise serializers.ValidationError(
                 'Нельзя написать более одного отзыва на произведение'
             )
@@ -152,4 +153,4 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserMeSerializer(UserSerializer):
-    role = serializers.ChoiceField(choices=settings.CHOICES, read_only=True)
+    role = serializers.ChoiceField(choices=models.USER_ROLE_CHOICES, read_only=True)
