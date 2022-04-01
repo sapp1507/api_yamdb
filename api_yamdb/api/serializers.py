@@ -154,5 +154,5 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserMeSerializer(UserSerializer):
-    role = serializers.ChoiceField(choices=models.USER_ROLE_CHOICES,
+    role = serializers.ChoiceField(choices=User.USER_ROLE_CHOICES,
                                    read_only=True)

@@ -1,6 +1,7 @@
 from rest_framework.permissions import SAFE_METHODS, BasePermission
+from django.contrib.auth import get_user_model
 
-from users import models
+User = get_user_model()
 
 
 class IsAuthorOrReadOnly(BasePermission):
@@ -12,14 +13,14 @@ class AdminPermission(BasePermission):
     def has_permission(self, request, view):
         user = request.user
         return user.is_authenticated and (
-            user.role == models.ADMIN or user.is_superuser
+            user.role == User.ADMIN or user.is_superuser
         )
 
 
 class AdminOrReadOnly(BasePermission):
     def has_permission(self, request, view):
         return (request.user.is_authenticated
-                and (request.user.role == models.ADMIN
+                and (request.user.role == User.ADMIN
                      or request.user.is_superuser)
                 or request.method in SAFE_METHODS)
 
@@ -35,7 +36,7 @@ class ReviewCommentPermissions(BasePermission):
             return True
         if view.action in ['partial_update', 'destroy']:
             if (request.user == obj.author
-                    or request.user.role == models.ADMIN
-                    or request.user.role == models.MODERATOR):
+                    or request.user.role == User.ADMIN
+                    or request.user.role == User.MODERATOR):
                 return True
         return False
