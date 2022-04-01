@@ -7,6 +7,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+
 from reviews.models import Category, Genre, Review, Title
 
 from .filters import TitleFilterSet
@@ -87,6 +88,7 @@ class CategoryViewSet(ListCreateDestroyViewSet):
 class TitleViewsSet(viewsets.ModelViewSet):
     """Вывод списка произведений с рейтингом."""
     permission_classes = [AdminOrReadOnly, ]
+    queryset = Title.objects.annotate(rating=Avg('reviews__score'))
     filter_backends = [DjangoFilterBackend, ]
     filterset_class = TitleFilterSet
     pagination_class = LimitOffsetPagination
@@ -96,9 +98,6 @@ class TitleViewsSet(viewsets.ModelViewSet):
             return TitleSerializer
         return TitleSaveSerializer
 
-    def get_queryset(self):
-        return Title.objects.annotate(rating=Avg('reviews__score'))
-
 
 class RegistrationAPIView(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -106,13 +105,12 @@ class RegistrationAPIView(APIView):
 
     def post(self, request):
         data = request.data
-        username = data.get('username')
         serializer = self.serializer_class(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         user = get_object_or_404(
             User,
-            username=username
+            username=serializer.validated_data['username']
         )
         send_confirmation_code(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -127,7 +125,7 @@ class TokenAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         user = get_object_or_404(
             User,
-            username=request.data.get('username')
+            username=serializer.validated_data['username']
         )
         token = str(RefreshToken.for_user(user).access_token)
         data = {'acces': token}
