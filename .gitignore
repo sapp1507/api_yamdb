@@ -149,6 +149,8 @@ dmypy.json
 media/
 
 /api_yamdb/api_yamdb/db.py
+/api_yamdb/reviews/migrations/0001_initial.py
+/api_yamdb/reviews/migrations/0002_auto_20220401_0850.py
 /api_yamdb/reviews/migrations/
 /api_yamdb/users/migrations/
 /api_yamdb/api/migrations/
