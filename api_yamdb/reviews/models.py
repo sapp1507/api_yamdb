@@ -18,11 +18,24 @@ class SlugBase(models.Model):
 
 
 class Genre(SlugBase):
+
+    class Meta:
+        verbose_name = 'Жанр'
+        verbose_name_plural = 'Жанры'
     pass
+
+    def __str__(self):
+        return self.name
 
 
 class Category(SlugBase):
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
     pass
+
+    def __str__(self):
+        return self.name
 
 
 class Title(models.Model):
@@ -60,6 +73,10 @@ class Title(models.Model):
             raise ValidationError('Год выпуска не может быть больше текущего')
         if self.year < 0:
             raise ValidationError('Год не может быть отрицательным')
+
+    class Meta:
+        verbose_name = 'Произведение'
+        verbose_name_plural = 'Произведения'
 
 
 class Review(models.Model):
