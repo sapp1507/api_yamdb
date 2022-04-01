@@ -7,6 +7,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.decorators import action
 
 from reviews.models import Category, Genre, Review, Title
 
@@ -127,7 +128,6 @@ class TokenAPIView(APIView):
             User,
             username=serializer.validated_data['username']
         )
-        # Нет проверки кода подтверждения
         token = str(RefreshToken.for_user(user).access_token)
         data = {'acces': token}
         return Response(data, status=status.HTTP_200_OK)
@@ -139,24 +139,20 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (AdminPermission,)
     lookup_field = 'username'
 
-
-# Получение профиля должно быть в UserViewSet отдельным экшеном
-# https://www.django-rest-framework.org/api-guide/viewsets/#marking-extra-actions-for-routing
-class UserMeAPIView(APIView):
-    permission_classes = (permissions.IsAuthenticated,)
-    serializer_class = UserMeSerializer
-
-    def get(self, request):
-        serializer = self.serializer_class(request.user)
-        data = serializer.data
-        return Response(data, status=status.HTTP_200_OK)
-
-    def patch(self, request):
+    @action(detail=False, methods=['get', 'patch'],
+            url_path='me', permission_classes=[permissions.IsAuthenticated],
+            serializer_class=UserMeSerializer)
+    def users_me(self, request):
         user = request.user
-        serializer = self.serializer_class(
-            user, data=request.data, partial=True
-        )
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        data = serializer.data
-        return Response(data, status=status.HTTP_200_OK)
+        if request.method == 'GET':
+            serializer = self.serializer_class(user)
+            data = serializer.data
+            return Response(data, status=status.HTTP_200_OK)
+        if request.method == 'PATCH':
+            serializer = self.serializer_class(
+                user, data=request.data, partial=True
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            data = serializer.data
+            return Response(data, status=status.HTTP_200_OK)

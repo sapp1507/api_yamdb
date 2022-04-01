@@ -15,15 +15,6 @@ today_date = date.today()
 
 
 def get_querry(user_data):
-<<<<<<< HEAD
-    querry = (
-        "INSERT INTO users_user (id, username, email, role,"
-        " bio, first_name, last_name, password, is_superuser, is_staff,"
-        "is_active, date_joined)"
-        "VALUES ({0},'{1}','{2}','{3}','{4}','{5}','{6}',"
-        "'', '0', '0','1', '{7}');").format(*user_data, today_date)
-    return querry
-=======
     return """INSERT INTO users_user (username, email, role,
                                 bio, first_name, last_name,
                                 password, is_superuser, is_staff,
@@ -32,7 +23,6 @@ def get_querry(user_data):
                                 '{4}','{5}','{6}',
                                 '', '0', '0',
                                 '1', {7});""".format(*user_data, today_date)
->>>>>>> 282a5299623b1543c9b45d7de5ad736ea8161d45
 
 
 def main(path_to_file):

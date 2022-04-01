@@ -8,11 +8,10 @@ class User(AbstractUser):
     ADMIN = 'admin'
 
     USER_ROLE_CHOICES = (
-        ( USER, 'Пользователь'),
-        ( ADMIN, 'Администратор'),
-        ( MODERATOR, 'Модератор'),
+        (USER, 'Пользователь'),
+        (ADMIN, 'Администратор'),
+        (MODERATOR, 'Модератор'),
     )
-
 
     bio = models.TextField('Биография', blank=True)
     role = models.CharField(max_length=12,
