@@ -105,6 +105,7 @@ class Review(models.Model):
                 name='unique_author_title'
             )
         ]
+        ordering = ('-pub_date',)
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
 
