@@ -1,4 +1,5 @@
 from rest_framework.permissions import SAFE_METHODS, BasePermission
+
 from users import models
 
 
@@ -18,7 +19,8 @@ class AdminPermission(BasePermission):
 class AdminOrReadOnly(BasePermission):
     def has_permission(self, request, view):
         return (request.user.is_authenticated
-                and (request.user.role == models.ADMIN or request.user.is_superuser)
+                and (request.user.role == models.ADMIN
+                     or request.user.is_superuser)
                 or request.method in SAFE_METHODS)
 
 
