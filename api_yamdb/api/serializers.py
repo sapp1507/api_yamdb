@@ -1,10 +1,11 @@
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from rest_framework import serializers
 
-from reviews.models import Category, Comment, Genre, Review, Title
+from reviews.models import Category, Comment, Genre, Review, Title, User
+from users import models
 
 User = get_user_model()
 
@@ -30,8 +31,8 @@ class ReviewSerializer(serializers.ModelSerializer):
         if self.context['request'].method != 'POST':
             return data
         user = self.context['request'].user
-        title = self.context['view'].kwargs.get('title_id')
-        if Review.objects.filter(title=title, author=user).exists():
+        title_id = self.context['view'].kwargs.get('title_id')
+        if Review.objects.filter(title=title_id, author=user).exists():
             raise serializers.ValidationError(
                 'Нельзя написать более одного отзыва на произведение'
             )
@@ -44,7 +45,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ['name', 'slug']
+        exclude = ['id']
         model = Genre
         lookup_field = 'slug'
         extra_kwargs = {
@@ -62,7 +63,7 @@ class GenreSerializer(serializers.ModelSerializer):
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ['name', 'slug']
+        exclude = ['id']
         model = Category
         lookup_field = 'slug'
         extra_kwargs = {
@@ -80,7 +81,6 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class TitleSerializer(serializers.ModelSerializer):
     rating = serializers.IntegerField(read_only=True)
-    description = serializers.CharField(required=False)
     genre = GenreSerializer(many=True)
     category = CategorySerializer()
 
@@ -96,13 +96,12 @@ class TitleSaveSerializer(TitleSerializer):
     category = serializers.SlugRelatedField(slug_field='slug',
                                             queryset=Category.objects)
 
-    def create(self, validated_data):
-        genres = validated_data.pop('genre')
-        title = Title.objects.create(**validated_data)
-        for genre in genres:
-            genre.titles.add(title)
-
-        return title
+    def validate(self, attrs):
+        if 'year' in attrs and attrs['year'] > timezone.now().year:
+            raise serializers.ValidationError(
+                'Год не может быть больше текущего'
+            )
+        return attrs
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -114,7 +113,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         username = data['username']
         if username == 'me':
             raise serializers.ValidationError(
-                'Имя пользователя me - недоступно'
+                'Имя пользователя me недопустимо'
             )
         return super().validate(data)
 
@@ -130,12 +129,14 @@ class TokenSerializer(serializers.ModelSerializer):
     def validate(self, data):
         if not data['username']:
             raise serializers.ValidationError(
-                'Имя пользователя me - недоступно'
+                'Передайте имя пользователя'
             )
         user = get_object_or_404(User, username=data['username'])
         confirmation_code = data['confirmation_code']
         if not default_token_generator.check_token(user, confirmation_code):
-            raise serializers.ValidationError()
+            raise serializers.ValidationError(
+                f'Код подтверждения был выдан не {user}'
+            )
         return super().validate(data)
 
 
@@ -153,4 +154,5 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserMeSerializer(UserSerializer):
-    role = serializers.ChoiceField(choices=settings.CHOICES, read_only=True)
+    role = serializers.ChoiceField(choices=models.USER_ROLE_CHOICES,
+                                   read_only=True)

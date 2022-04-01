@@ -108,8 +108,5 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
-CHOICES = (
-    ('user', 'Пользователь'),
-    ('admin', 'Администратор'),
-    ('moderator', 'Модератор'),
-)
+
+ADMINS = [('Admin', 'admin@yamdb.com')]
