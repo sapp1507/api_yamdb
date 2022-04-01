@@ -110,7 +110,10 @@ class RegistrationAPIView(APIView):
         serializer = self.serializer_class(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        user = User.objects.get(username=username)
+        user = get_object_or_404(
+            User,
+            username=username
+        )
         send_confirmation_code(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -122,7 +125,10 @@ class TokenAPIView(APIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = User.objects.get(username=request.data.get('username'))
+        user = get_object_or_404(
+            User,
+            username=request.data.get('username')
+        )
         token = str(RefreshToken.for_user(user).access_token)
         data = {'acces': token}
         return Response(data, status=status.HTTP_200_OK)
