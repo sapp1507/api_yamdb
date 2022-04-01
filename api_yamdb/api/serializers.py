@@ -3,7 +3,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from reviews.models import Category, Comment, Genre, Review, Title
+from reviews.models import Category, Comment, Genre, Review, Title, User
+from users import models
 
 User = get_user_model()
 
@@ -152,4 +153,4 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserMeSerializer(UserSerializer):
-    role = serializers.ChoiceField(choices=settings.CHOICES, read_only=True)
+    role = serializers.ChoiceField(choices=models.USER_ROLE_CHOICES, read_only=True)
