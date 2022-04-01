@@ -1,7 +1,7 @@
-import sqlite3
 import csv
-from pathlib import Path
+import sqlite3
 from datetime import date
+from pathlib import Path
 
 path_to_db = Path('api_yamdb', 'db.sqlite3')
 path_to_file = Path('api_yamdb', 'static', 'data', 'users.csv')
@@ -9,7 +9,7 @@ today_date = str(date.today())
 
 
 def get_querry(user_data):
-    querry = """INSERT INTO users_user (username, email, role,
+    return """INSERT INTO users_user (username, email, role,
                                 bio, first_name, last_name,
                                 password, is_superuser, is_staff,
                                 is_active, date_joined)
@@ -17,7 +17,6 @@ def get_querry(user_data):
                                 '{4}','{5}','{6}',
                                 '', '0', '0',
                                 '1', {7});""".format(*user_data, today_date)
-    return querry
 
 
 def main(path_to_file):

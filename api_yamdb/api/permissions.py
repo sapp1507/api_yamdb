@@ -35,4 +35,4 @@ class ReviewCommentPermissions(BasePermission):
                     or request.user.role == 'admin'
                     or request.user.role == 'moderator'):
                 return True
-            return False
+        return False

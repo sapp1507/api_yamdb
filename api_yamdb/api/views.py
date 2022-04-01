@@ -7,7 +7,6 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-
 from reviews.models import Category, Genre, Review, Title
 
 from .filters import TitleFilterSet
@@ -98,10 +97,7 @@ class TitleViewsSet(viewsets.ModelViewSet):
         return TitleSaveSerializer
 
     def get_queryset(self):
-        titles = Title.objects.annotate(
-            rating=Avg('reviews__score')
-        )
-        return titles
+        return Title.objects.annotate(rating=Avg('reviews__score'))
 
 
 class RegistrationAPIView(APIView):

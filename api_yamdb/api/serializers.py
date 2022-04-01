@@ -3,7 +3,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-
 from reviews.models import Category, Comment, Genre, Review, Title
 
 User = get_user_model()
