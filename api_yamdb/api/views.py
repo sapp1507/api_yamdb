@@ -10,7 +10,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import action
 
 from reviews.models import Category, Genre, Review, Title
-
 from .filters import TitleFilterSet
 from .mixins import ListCreateDestroyViewSet
 from .permissions import (AdminOrReadOnly, AdminPermission,
