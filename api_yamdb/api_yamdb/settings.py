@@ -109,4 +109,4 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-ADMINS = [('Admin', 'admin@yamdb.com')]
+ADMIN_EMAIL = 'admin@yamdb.com'

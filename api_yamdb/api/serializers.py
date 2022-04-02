@@ -134,7 +134,7 @@ class TokenSerializer(serializers.ModelSerializer):
         confirmation_code = data['confirmation_code']
         if not default_token_generator.check_token(user, confirmation_code):
             raise serializers.ValidationError(
-                f'Код подтверждения был выдан не {user}'
+                'Код подтверждения некорректный'
             )
         return super().validate(data)
 

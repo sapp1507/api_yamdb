@@ -9,7 +9,7 @@ def send_confirmation_code(user):
     send_mail(
         'Код подтверждения',
         f'Ваш код подтверждения {confirmation_code}',
-        settings.ADMINS,
+        settings.ADMIN_EMAIL,
         [f'{email}'],
         fail_silently=False,
     )
